@@ -3,8 +3,14 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
 
+// GitHub Pages sert le site sous /<nom-du-depot>/, donc les assets doivent
+// etre references en chemin relatif a cette base. Surchargeable via BASE_PATH
+// (ex: BASE_PATH=/ pour un domaine personnalise).
+const BASE_PATH = process.env.BASE_PATH ?? '/Formation-PV-bess/';
+
 export default defineConfig(() => {
   return {
+    base: BASE_PATH,
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
