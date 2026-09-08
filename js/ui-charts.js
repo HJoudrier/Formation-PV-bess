@@ -7,22 +7,37 @@
   var esc = MGDom.esc;
   var r1 = function (v) { return Math.round(v * 10) / 10; };
 
+  /**
+   * Convention de signe du graphique des puissances : ce qui ALIMENTE le bus
+   * est positif, ce qui le CONSOMME est négatif. La somme des séries est donc
+   * nulle à chaque heure (bilan de puissance du bus alternatif).
+   *
+   * Les valeurs de ce bilan ne sont volontairement pas arrondies : arrondir
+   * chaque série séparément décalerait la somme de quelques dixièmes.
+   */
   function toChartData(steps) {
     return steps.map(function (s) {
+      // Surplus solaire que la limite d'injection empêche d'évacuer.
+      var net = s.loadKw + s.batteryActualKw - s.pvGenKw;
+      var curtailed = net < 0 ? Math.max(0, -net - s.gridExportKw) : 0;
+
       return {
-      hour: s.hour,
-      label: s.label,
-      load: r1(s.loadKw),
-      pv: r1(s.pvGenKw),
-      batteryCharge: s.batteryActualKw > 0 ? r1(s.batteryActualKw) : 0,
-      batteryDischarge: s.batteryActualKw < 0 ? r1(Math.abs(s.batteryActualKw)) : 0,
-      gridImport: r1(s.gridImportKw),
-      gridExport: r1(s.gridExportKw),
-      socPercent: r1(s.batterySocPercent),
-      socKwh: r1(s.batterySocKwh),
-      spotPrice: r1(s.spotPriceEurPerMwh),
-      costEur: Math.round(s.costEur * 100) / 100,
-      deficit: r1(s.unservedLoadKw)
+        hour: s.hour,
+        label: s.label,
+
+        // Séries du bilan (somme nulle)
+        pv: s.pvGenKw,                                   // source
+        load: -s.loadKw,                                 // consommation
+        grid: s.gridImportKw - s.gridExportKw,           // + soutirage / − injection
+        battery: -s.batteryActualKw,                     // + décharge / − charge
+        deficit: s.unservedLoadKw,                       // charge non servie
+        curtailed: -curtailed,                           // surplus écrêté
+
+        // Séries des autres graphiques (affichage seul)
+        socPercent: r1(s.batterySocPercent),
+        socKwh: r1(s.batterySocKwh),
+        spotPrice: r1(s.spotPriceEurPerMwh),
+        costEur: Math.round(s.costEur * 100) / 100
       };
     });
   }
@@ -69,26 +84,29 @@
 
       // --- 1. Equilibre des puissances --------------------------------------
       var balanceSeries = [
-        { type: 'area', key: 'pv', color: '#f59e0b', fill: 0.25, width: 2, label: 'Solaire PV (kW)' },
-        { type: 'line', key: 'load', color: '#f97316', width: 2.5, dots: true, label: 'Charge (kW)' },
-        { type: 'bar', key: 'gridImport', color: '#6366f1', opacity: 0.7, label: 'Import Réseau (kW)' },
-        { type: 'bar', key: 'gridExport', color: '#10b981', opacity: 0.6, label: 'Export Réseau (kW)' },
-        { type: 'bar', key: 'deficit', color: '#e11d48', opacity: 0.9, label: 'Déficit Charge (kW)' },
-        { type: 'line', key: 'batteryCharge', color: '#14b8a6', width: 2, dash: '3 3', label: 'Charge Batt. (kW)' },
-        { type: 'line', key: 'batteryDischarge', color: '#06b6d4', width: 2, label: 'Décharge Batt. (kW)' }
+        { type: 'area', key: 'pv', color: '#f59e0b', fill: 0.22, width: 2, label: 'Solaire PV (+)' },
+        { type: 'line', key: 'load', color: '#f97316', width: 2.5, label: 'Charge du site (−)' },
+        { type: 'line', key: 'grid', color: '#6366f1', width: 2.5, dots: true, label: 'Réseau (+ soutirage / − injection)' },
+        { type: 'line', key: 'battery', color: '#14b8a6', width: 2.5, label: 'Batterie (+ décharge / − charge)' },
+        { type: 'bar', key: 'deficit', color: '#e11d48', opacity: 0.9, label: 'Déficit non couvert (+)' },
+        { type: 'bar', key: 'curtailed', color: '#a855f7', opacity: 0.8, label: 'Surplus écrêté (−)' }
       ];
       html += chartCard({
         dot: '#fbbf24',
         title: 'Équilibre des Flux de Puissance (kW)',
-        desc: 'Production PV, demande charge, cycles batterie et import/export réseau.',
+        desc: 'Convention : ce qui alimente le bus est positif, ce qui le consomme est négatif. ' +
+              'À chaque heure, la somme des courbes est nulle.',
         meta: 'Repère temporel actuel : <strong class="t-emerald">' + esc(currentLabel) + '</strong>',
         svg: MGChart.build({
           height: 300,
           data: d,
           currentHour: h,
-          axes: { left: { keys: ['pv', 'load', 'gridImport', 'gridExport', 'batteryCharge', 'batteryDischarge', 'deficit'], unit: '' } },
+          axes: { left: { keys: ['pv', 'load', 'grid', 'battery', 'deficit', 'curtailed'], unit: '' } },
           series: balanceSeries,
-          refLinesY: [{ value: p.gridMaxPowerKw, color: '#f43f5e', label: 'Pmax Réseau (' + p.gridMaxPowerKw + ' kW)' }]
+          refLinesY: [
+            { value: p.gridMaxPowerKw, color: '#f43f5e', label: 'Soutirage max (' + p.gridMaxPowerKw + ' kW)' },
+            { value: -p.gridMaxInjectionKw, color: '#f43f5e', label: 'Injection max (' + p.gridMaxInjectionKw + ' kW)' }
+          ]
         }),
         legend: MGChart.legend(balanceSeries)
       });
