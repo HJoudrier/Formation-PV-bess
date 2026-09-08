@@ -39,9 +39,6 @@ export default function App() {
   // File Manager Modal state
   const [isDataModalOpen, setIsDataModalOpen] = useState<boolean>(false);
 
-  // Active view tab for layout focusing
-  const [activeViewSection, setActiveViewSection] = useState<'all' | 'synoptic' | 'dispatch' | 'sizing'>('all');
-
   // Run full simulation engine
   const simulation = useMemo(() => {
     return runMicrogridSimulation(hourlyData, params);
@@ -123,74 +120,24 @@ export default function App() {
 
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        {/* Navigation pills for focusing views */}
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-900/60 p-1.5 rounded-xl border border-slate-800/80">
-          <div className="flex items-center gap-1 text-xs">
-            <button
-              onClick={() => setActiveViewSection('all')}
-              className={`px-3 py-1.5 rounded-lg transition-colors font-medium ${
-                activeViewSection === 'all'
-                  ? 'bg-slate-800 text-white shadow-sm font-semibold'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              Tableau de bord Complet
-            </button>
-            <button
-              onClick={() => setActiveViewSection('synoptic')}
-              className={`px-3 py-1.5 rounded-lg transition-colors font-medium ${
-                activeViewSection === 'synoptic'
-                  ? 'bg-slate-800 text-emerald-300 shadow-sm font-semibold'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              Synoptique & Graphiques
-            </button>
-            <button
-              onClick={() => setActiveViewSection('sizing')}
-              className={`px-3 py-1.5 rounded-lg transition-colors font-medium ${
-                activeViewSection === 'sizing'
-                  ? 'bg-slate-800 text-amber-300 shadow-sm font-semibold'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              Dimensionnement (CAPEX)
-            </button>
-            <button
-              onClick={() => setActiveViewSection('dispatch')}
-              className={`px-3 py-1.5 rounded-lg transition-colors font-medium ${
-                activeViewSection === 'dispatch'
-                  ? 'bg-slate-800 text-teal-300 shadow-sm font-semibold'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              Pilotage Batterie (24h)
-            </button>
-          </div>
-        </div>
-
         {/* 1. SYNOPTIC MICROGRID DIAGRAM */}
-        {(activeViewSection === 'all' || activeViewSection === 'synoptic') && (
-          <section aria-label="Schéma synoptique">
-            <SynopticDiagram
-              currentStep={currentStep}
-              params={params}
-              totalHoursWithDeficit={simulation.summary.hoursWithDeficit}
-            />
-          </section>
-        )}
+        <section aria-label="Schéma synoptique">
+          <SynopticDiagram
+            currentStep={currentStep}
+            params={params}
+            totalHoursWithDeficit={simulation.summary.hoursWithDeficit}
+          />
+        </section>
 
         {/* 2. INTERACTIVE 24H CHARTS */}
-        {(activeViewSection === 'all' || activeViewSection === 'synoptic') && (
-          <section aria-label="Graphiques temporels">
-            <MicrogridCharts
-              steps={simulation.steps}
-              currentHour={currentHour}
-              onHourSelect={setCurrentHour}
-              params={params}
-            />
-          </section>
-        )}
+        <section aria-label="Graphiques temporels">
+          <MicrogridCharts
+            steps={simulation.steps}
+            currentHour={currentHour}
+            onHourSelect={setCurrentHour}
+            params={params}
+          />
+        </section>
 
         {/* 4. FINANCIAL & ENERGY SUMMARY */}
         <section aria-label="Bilan financier et énergétique">
@@ -201,31 +148,27 @@ export default function App() {
         </section>
 
         {/* 5. SIZING & CAPEX CONTROLS */}
-        {(activeViewSection === 'all' || activeViewSection === 'sizing') && (
-          <section aria-label="Dimensionnement et paramètres">
-            <SizingControlPanel
-              params={params}
-              onChangeParams={setParams}
-              pvCapexEur={simulation.summary.pvCapexEur}
-              batteryTotalCapexEur={simulation.summary.batteryTotalCapexEur}
-              totalCapexEur={simulation.summary.totalCapexEur}
-            />
-          </section>
-        )}
+        <section aria-label="Dimensionnement et paramètres">
+          <SizingControlPanel
+            params={params}
+            onChangeParams={setParams}
+            pvCapexEur={simulation.summary.pvCapexEur}
+            batteryTotalCapexEur={simulation.summary.batteryTotalCapexEur}
+            totalCapexEur={simulation.summary.totalCapexEur}
+          />
+        </section>
 
         {/* 6. BATTERY DISPATCH SCHEDULE EDITOR */}
-        {(activeViewSection === 'all' || activeViewSection === 'dispatch') && (
-          <section aria-label="Pilotage de la batterie">
-            <BatteryDispatchEditor
-              hourlyData={hourlyData}
-              steps={simulation.steps}
-              params={params}
-              onUpdateHourlyData={setHourlyData}
-              selectedHour={currentHour}
-              onSelectHour={setCurrentHour}
-            />
-          </section>
-        )}
+        <section aria-label="Pilotage de la batterie">
+          <BatteryDispatchEditor
+            hourlyData={hourlyData}
+            steps={simulation.steps}
+            params={params}
+            onUpdateHourlyData={setHourlyData}
+            selectedHour={currentHour}
+            onSelectHour={setCurrentHour}
+          />
+        </section>
       </main>
 
       {/* File Management & Data Import Modal */}
