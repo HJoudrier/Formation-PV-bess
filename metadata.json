@@ -1,6 +1,0 @@
-{
-  "name": "Microgrid Planner - Dimensionnement & Pilotage",
-  "description": "Interface visuelle de dimensionnement et de pilotage d'un micro-réseau électrique (PV, Batterie, Charge non-pilotable, Réseau SPOT) sur 24h avec animation des flux et gestion des contraintes.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
