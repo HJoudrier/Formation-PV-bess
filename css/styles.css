@@ -372,15 +372,18 @@ button { font-family: inherit; cursor: pointer; }
 
 .hour-marks {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
   margin-top: 0.125rem;
 }
 
+/* Chaque repere occupe la meme largeur : les points restent alignes sur le
+   curseur, que l'heure porte une etiquette ou non. */
 .hour-mark {
+  flex: 1 1 0;
+  min-width: 0;
   background: none;
   border: none;
-  padding: 0.125rem;
+  padding: 0.125rem 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -401,7 +404,17 @@ button { font-family: inherit; cursor: pointer; }
 .hour-mark .dot.selected { background: var(--emerald-400); box-shadow: 0 0 0 2px var(--emerald-950); }
 .hour-mark .dot.deficit { background: var(--red-500); box-shadow: 0 0 0 2px var(--rose-950); }
 .hour-mark.selected { color: var(--emerald-300); font-weight: 700; }
-.hour-mark .hour-label { font-size: 0.5625rem; }
+
+/* Etiquettes : masquees par defaut, revelees toutes les 6h puis toutes les 3h
+   selon la largeur disponible. L'heure courante reste lisible dans la pastille
+   horloge au-dessus, inutile de l'etiqueter ici. */
+.hour-mark .hour-label {
+  font-size: 0.5625rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  display: none;
+}
+.hour-mark.tick6 .hour-label { display: block; }
 
 /* ---------- Champs ---------- */
 
@@ -811,6 +824,7 @@ table.dispatch tbody tr.selected { background: rgba(2, 44, 34, 0.45); color: var
   .chart-card { padding: 1rem; }
   .deficit-banner { flex-direction: row; align-items: center; justify-content: space-between; }
   .deficit-banner-hint { align-self: auto; }
+  .hour-mark.tick3 .hour-label { display: block; }
   .hour-mark .hour-label { font-size: 0.625rem; }
 }
 

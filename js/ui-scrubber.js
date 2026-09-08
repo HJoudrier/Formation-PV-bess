@@ -55,9 +55,14 @@
     });
 
     // Les 24 reperes sont crees une seule fois, puis seulement reclasses.
+    // Les 24 heures restent cliquables, mais seules certaines portent une
+    // etiquette : toutes les 6h sur mobile, toutes les 3h des que la place le
+    // permet (voir .hour-label dans la feuille de style). Cela evite que la
+    // ligne temporelle deborde sur un ecran de smartphone.
     for (var i = 0; i < 24; i++) {
+      var tick = i % 6 === 0 ? ' tick6' : i % 3 === 0 ? ' tick3' : '';
       marks.appendChild(MGDom.el(
-        '<button class="hour-mark" data-hour="' + i + '" title="Heure ' + i + ':00">' +
+        '<button class="hour-mark' + tick + '" data-hour="' + i + '" title="Heure ' + i + ':00">' +
         '<span class="dot"></span><span class="hour-label">' + i + 'h</span></button>'
       ));
     }
