@@ -505,41 +505,6 @@ table.dispatch tbody tr.selected { background: rgba(2, 44, 34, 0.45); color: var
 .tag.limited { background: rgba(69, 26, 3, 0.8); color: var(--amber-300); border: 1px solid rgba(146, 64, 14, 0.6); }
 .tag.nominal { color: rgba(52, 211, 153, 0.8); }
 
-/* ---------- Onglets graphiques ---------- */
-
-.tabs {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  background: rgba(30, 41, 59, 0.9);
-  padding: 0.25rem;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--slate-700);
-  font-size: 0.75rem;
-  overflow-x: auto;
-  white-space: nowrap;
-  scrollbar-width: none;
-}
-.tabs::-webkit-scrollbar { display: none; }
-
-.tab {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
-  border-radius: var(--radius);
-  border: none;
-  background: none;
-  color: var(--slate-400);
-  font-weight: 500;
-  transition: background-color 0.15s, color 0.15s;
-}
-.tab:hover { color: var(--slate-200); }
-.tab.active { background: var(--slate-700); color: #fff; font-weight: 600; }
-.tab.active.amber { color: var(--amber-300); }
-.tab.active.teal { color: var(--teal-300); }
-.tab.active.indigo { color: var(--indigo-300); }
-
 /* ---------- Graphiques ---------- */
 
 .chart-card {
