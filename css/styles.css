@@ -657,6 +657,48 @@ table.dispatch tbody tr.selected { background: rgba(2, 44, 34, 0.45); color: var
 .strat.sky { background: rgba(8, 47, 73, 0.8); color: var(--sky-300); border-color: rgba(7, 89, 133, 0.6); }
 .strat.amber { background: rgba(69, 26, 3, 0.8); color: var(--amber-300); border-color: rgba(146, 64, 14, 0.6); }
 
+/* ---------- Histogramme editable des consignes batterie ---------- */
+
+.batt-histo {
+  background: rgba(2, 6, 23, 0.8);
+  border: 1px solid rgba(17, 94, 89, 0.4);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.batt-histo-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.batt-histo-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--slate-300);
+  font-weight: 500;
+}
+
+.batt-histo-readout { font-size: 0.8125rem; font-weight: 700; }
+
+/* touch-action: none est indispensable — sans lui, un glissement vertical au
+   doigt fait defiler la page au lieu d'ajuster la consigne. */
+.batt-histo-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  touch-action: none;
+  cursor: ns-resize;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 .quick-card {
   background: linear-gradient(to right, var(--slate-950), var(--slate-900), var(--slate-950));
   padding: 0.875rem;

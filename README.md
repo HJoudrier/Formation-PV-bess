@@ -26,7 +26,8 @@ n'importe quel serveur web statique, GitHub Pages compris.
 | `js/chart.js` | Moteur de graphiques SVG |
 | `js/icons.js` | Jeu d'icônes SVG |
 | `js/dom.js` | Utilitaires DOM partagés |
-| `js/ui-*.js` | Composants d'interface |
+| `js/ui-batt-histogram.js` | Histogramme éditable des consignes batterie |
+| `js/ui-*.js` | Autres composants d'interface |
 | `js/app.js` | État applicatif et assemblage |
 
 ## Fonctionnalités
@@ -37,8 +38,12 @@ n'importe quel serveur web statique, GitHub Pages compris.
   batterie, prix SPOT et facturation.
 - **Dimensionnement** : puissance PV, capacité et puissance batterie, limite
   de raccordement, avec calcul du CAPEX en direct.
-- **Pilotage batterie** : consignes horaires manuelles ou stratégies
-  automatiques (autoconsommation, arbitrage SPOT, écrêtage, zéro injection).
+- **Pilotage batterie** : histogramme éditable — saisissez une barre et
+  glissez verticalement pour régler la consigne de l'heure (souris ou doigt) —
+  complété par un curseur, un tableau 24h et des stratégies automatiques
+  (autoconsommation, arbitrage SPOT, écrêtage, zéro injection). Le contour
+  pointillé ambre signale une consigne que les limites physiques de la
+  batterie n'ont pas permis de tenir.
 - **Import / export** : courbes au format CSV ou JSON, export des résultats,
   sauvegarde et restauration du projet — le tout en local.
 

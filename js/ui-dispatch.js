@@ -50,6 +50,7 @@
         return '<button class="strat ' + s.cls + '" data-strategy="' + s.id + '">' + s.label + '</button>';
       }).join('') + '</div></div>' +
 
+      '<div class="histo-slot"></div>' +
       '<div class="quick-card">' +
       '<div class="quick-head">' +
       '<div style="display:flex;align-items:center;gap:0.5rem">' +
@@ -91,6 +92,9 @@
       '<th style="min-width:200px">Consigne Pilotage (-Décharge / +Charge)</th>' +
       '<th>Puissance Réelle</th><th>SOC Fin Heure</th><th>Statut Physique</th>' +
       '</tr></thead><tbody></tbody></table></div>';
+
+    var histogram = MGBattHistogram.create(store);
+    root.querySelector('.histo-slot').appendChild(histogram.el);
 
     var tbody = root.querySelector('tbody');
     var tableWrap = root.querySelector('.table-wrap');
@@ -197,6 +201,8 @@
       var pMax = p.batteryPowerKw;
       var h = state.currentHour;
       var active = steps[h] || steps[0];
+
+      histogram.update(state);
 
       toggleBtn.innerHTML = isExpanded
         ? 'Masquer tableau 24h ' + Icons.get('chevronUp', '', 15)
