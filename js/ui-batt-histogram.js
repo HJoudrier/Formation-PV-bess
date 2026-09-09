@@ -10,7 +10,7 @@
   var esc = MGDom.esc;
 
   var W = 800, H = 210;
-  var M = { l: 44, r: 14, t: 18, b: 22 };
+  var M = { l: 44, r: 38, t: 18, b: 22 };  // marge droite : axe des SOC
   var PW = W - M.l - M.r;
   var PH = H - M.t - M.b;
   var BAND = PW / 24;
@@ -21,6 +21,17 @@
 
   function yOf(v, pMax) {
     return M.t + HALF * (1 - v / (pMax || 1));
+  }
+
+  var SOC_COLOR = '#c084fc';
+
+  /** Ordonnee d'un etat de charge, en pourcentage (0% en bas, 100% en haut). */
+  function socY(pct) {
+    return M.t + PH * (1 - Math.max(0, Math.min(100, pct)) / 100);
+  }
+
+  function clamp(v, mn, mx) {
+    return Math.max(mn, Math.min(mx, v));
   }
 
   /** Rectangle d'une barre, de la ligne zero jusqu'a la valeur. */
@@ -44,7 +55,9 @@
       '<div class="batt-histo-head">' +
       '<span class="batt-histo-title">' + Icons.get('sliders', 't-teal', 14) +
       ' Consignes 24h — saisissez une barre et glissez pour ajuster</span>' +
-      '<span class="batt-histo-readout mono" data-out="readout"></span>' +
+      '<span class="batt-histo-meta">' +
+      '<span class="batt-histo-soc-key"><i></i>SOC batterie</span>' +
+      '<span class="batt-histo-readout mono" data-out="readout"></span></span>' +
       '</div>' +
       '<svg class="batt-histo-svg" role="img" ' +
       'aria-label="Histogramme des consignes de puissance batterie sur 24 heures"></svg>' +
@@ -158,6 +171,42 @@
         }
       });
 
+      // --- Etat de charge, superpose aux barres -----------------------------
+      var pr = state.params;
+      var socMin = clamp(pr.batterySocMinPercent, 0, 100);
+      var socMax = clamp(pr.batterySocMaxPercent, 0, 100);
+
+      // Bornes SOC : elles expliquent les consignes non tenues ci-dessus.
+      [socMin, socMax].forEach(function (pct) {
+        var y = socY(pct);
+        s += '<line x1="' + M.l + '" y1="' + y.toFixed(1) + '" x2="' + (M.l + PW) + '" y2="' + y.toFixed(1) +
+             '" stroke="' + SOC_COLOR + '" stroke-width="1" stroke-dasharray="2 4" opacity="0.45"/>';
+      });
+
+      // Le moteur rend le SOC de FIN d'heure : chaque point se place donc au
+      // bord droit de sa bande, precede du SOC initial a l'origine.
+      var pts = [M.l.toFixed(1) + ',' +
+                 socY(clamp(pr.batteryInitialSocPercent, socMin, socMax)).toFixed(1)];
+      steps.forEach(function (st, i) {
+        pts.push((M.l + (i + 1) * BAND).toFixed(1) + ',' + socY(st.batterySocPercent).toFixed(1));
+      });
+      s += '<polyline points="' + pts.join(' ') + '" fill="none" stroke="' + SOC_COLOR +
+           '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+
+      // Point sur l'heure selectionnee
+      var selStep = steps[sel];
+      if (selStep) {
+        s += '<circle cx="' + (M.l + (sel + 1) * BAND).toFixed(1) + '" cy="' +
+             socY(selStep.batterySocPercent).toFixed(1) + '" r="3" fill="' + SOC_COLOR +
+             '" stroke="#020617" stroke-width="1.5"/>';
+      }
+
+      // Axe des SOC, a droite
+      [0, 50, 100].forEach(function (pct) {
+        s += '<text x="' + (M.l + PW + 6) + '" y="' + (socY(pct) + 3).toFixed(1) + '" fill="' + SOC_COLOR +
+             '" font-size="9.5" text-anchor="start" font-family="monospace" opacity="0.85">' + pct + '%</text>';
+      });
+
       // Etiquettes horaires, toutes les 3h
       steps.forEach(function (st, i) {
         if (i % 3 !== 0) return;
@@ -173,7 +222,8 @@
       readout.textContent = (cur ? cur.label : '00:00') + ' · ' +
         (v > 0 ? '+' + v.toFixed(1) + ' kW (charge)'
           : v < 0 ? v.toFixed(1) + ' kW (décharge)'
-          : '0.0 kW (veille)');
+          : '0.0 kW (veille)') +
+        (cur ? ' · SOC ' + cur.batterySocPercent.toFixed(0) + '%' : '');
       readout.className = 'batt-histo-readout mono ' +
         (v > 0 ? 't-teal' : v < 0 ? 't-cyan' : 't-slate');
     }

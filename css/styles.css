@@ -685,6 +685,22 @@ table.dispatch tbody tr.selected { background: rgba(2, 44, 34, 0.45); color: var
   font-weight: 500;
 }
 
+.batt-histo-meta { display: inline-flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+
+.batt-histo-soc-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.6875rem;
+  color: var(--slate-400);
+}
+.batt-histo-soc-key i {
+  width: 0.75rem;
+  height: 0;
+  border-top: 2px solid #c084fc;
+  display: inline-block;
+}
+
 .batt-histo-readout { font-size: 0.8125rem; font-weight: 700; }
 
 /* touch-action: none est indispensable — sans lui, un glissement vertical au

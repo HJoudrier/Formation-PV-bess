@@ -43,7 +43,10 @@ n'importe quel serveur web statique, GitHub Pages compris.
   complété par un curseur, un tableau 24h et des stratégies automatiques
   (autoconsommation, arbitrage SPOT, écrêtage, zéro injection). Le contour
   pointillé ambre signale une consigne que les limites physiques de la
-  batterie n'ont pas permis de tenir.
+  batterie n'ont pas permis de tenir, et la courbe violette superposée donne
+  l'état de charge au cours des 24 heures (axe des pourcentages à droite,
+  bornes SOC min/max en pointillés) : on voit ainsi pourquoi une consigne
+  n'est pas tenue — la batterie est pleine ou vide.
 - **Import / export** : courbes au format CSV ou JSON, export des résultats,
   sauvegarde et restauration du projet — le tout en local.
 
