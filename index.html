@@ -1,18 +1,39 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Microgrid Planner - Dimensionnement & Pilotage</title>
+    <title>Microgrid Planner - Dimensionnement &amp; Pilotage</title>
     <meta name="description" content="Interface visuelle de dimensionnement et de pilotage d'un micro-réseau électrique (PV, Batterie, Charge non-pilotable, Réseau SPOT) sur 24h avec animation des flux et gestion des contraintes." />
-    <meta property="og:title" content="Microgrid Planner - Dimensionnement & Pilotage" />
+    <meta property="og:title" content="Microgrid Planner - Dimensionnement &amp; Pilotage" />
     <meta property="og:description" content="Interface visuelle de dimensionnement et de pilotage d'un micro-réseau électrique (PV, Batterie, Charge non-pilotable, Réseau SPOT) sur 24h avec animation des flux et gestion des contraintes." />
     <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+    <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+
+    <!--
+      Scripts classiques charges dans l'ordre des dependances.
+      Aucun module ES, aucun build, aucune requete reseau : la page
+      fonctionne en l'ouvrant directement depuis le disque (file://).
+    -->
+    <script src="js/dom.js"></script>
+    <script src="js/icons.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/strategies.js"></script>
+    <script src="js/files.js"></script>
+    <script src="js/chart.js"></script>
+    <script src="js/ui-scrubber.js"></script>
+    <script src="js/ui-synoptic.js"></script>
+    <script src="js/ui-charts.js"></script>
+    <script src="js/ui-summary.js"></script>
+    <script src="js/ui-sizing.js"></script>
+    <script src="js/ui-batt-histogram.js"></script>
+    <script src="js/ui-dispatch.js"></script>
+    <script src="js/ui-modal.js"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>
-
